@@ -13,10 +13,12 @@ djangorestframework==3.16.0
 drf-spectacular==0.28.0
 ffmpeg-python==0.2.0
 future==1.0.0
+gunicorn==23.0.0
 inflection==0.5.1
 jsonschema==4.23.0
 jsonschema-specifications==2024.10.1
 kombu==5.5.3
+packaging==25.0
 pillow==11.2.1
 prompt_toolkit==3.0.51
 python-dateutil==2.9.0.post0
