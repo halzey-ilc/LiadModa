@@ -3,8 +3,13 @@ from django.urls import path, include
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.http import JsonResponse  # 👈 добавим
+
+def index(request):
+    return JsonResponse({"message": "🎉 Liamoda API is running!", "status": "OK"})
 
 urlpatterns = [
+    path('', index),  # 👈 вот это добавили
     path('admin/', admin.site.urls),
 
     # Swagger:
