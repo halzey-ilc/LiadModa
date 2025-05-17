@@ -12,7 +12,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     parser_classes = [MultiPartParser, FormParser]
 
     def perform_create(self, serializer):
-        instance = serializer.save()
+        instance = serializer.save(status='processing')  # 👈 устанавливаем статус при создании
+
         if instance.video:
             process_video_task.delay(instance.id)  # асинхронно сжимаем и делаем превью
        
