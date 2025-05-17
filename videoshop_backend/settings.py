@@ -29,8 +29,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-1b)a*_@zn0uuh2fdfc798
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
+DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 * 1024 * 1024
 
-#ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '192.168.0.119', '10.252.25.143']
 
 
 REST_FRAMEWORK = {

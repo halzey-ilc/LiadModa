@@ -12,4 +12,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Команда запуска (используем gunicorn как в Procfile)
-CMD ["gunicorn", "videoshop_backend.wsgi", "--bind", "0.0.0.0:8000"]
+CMD ["gunicorn", "videoshop_backend.wsgi", "--bind", "0.0.0.0:8000", "--timeout", "120"]
