@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-1b)a*_@zn0uuh2fdfc798
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 DATA_UPLOAD_MAX_MEMORY_SIZE = 104857600  # 100 * 1024 * 1024
