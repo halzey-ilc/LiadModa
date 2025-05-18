@@ -11,10 +11,10 @@ def thumbnail_upload_path(instance, filename):
 
 class Product(models.Model):
     STATUS_CHOICES = [
-        ('pending', '⏳ В ожидании'),
-        ('processing', '⚙️ Обработка'),
-        ('done', '✅ Готово'),
-        ('failed', '❌ Ошибка'),
+        ('pending', ' В ожидании'),
+        ('processing', ' Обработка'),
+        ('done', ' Готово'),
+        ('failed', ' Ошибка'),
     ]
 
     title = models.CharField(max_length=255)
@@ -24,7 +24,7 @@ class Product(models.Model):
     thumbnail = models.ImageField(upload_to=thumbnail_upload_path, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # 🔥 Статус обработки
+    # Только один раз указываем статус
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):

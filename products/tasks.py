@@ -2,10 +2,11 @@ from celery import shared_task
 from celery.exceptions import SoftTimeLimitExceeded
 import os
 import uuid
+import ffmpeg
 from django.conf import settings
 from src.utils.rust_video import compress_video
+from src.utils.cloudinary_utils import upload_to_cloudinary
 from products.models.product import Product
-import ffmpeg
 
 
 @shared_task(bind=True, max_retries=3, default_retry_delay=10)
@@ -33,33 +34,36 @@ def process_video_task(self, product_id):
         if not success:
             instance.status = 'failed'
             instance.save()
-            print("❌ Rust-сжатие не удалось, задача будет повторена...")
             raise self.retry(
                 countdown=15,
                 exc=Exception("Rust compression failed")
             )
 
-        instance.video.name = f"compressed/{compressed_filename}"
+        # ✅ Загрузка видео на Cloudinary
+        cloud_video_url = upload_to_cloudinary(compressed_path, folder='videos', resource_type='video')
+        instance.video = cloud_video_url
 
-        # Превью
+        # Генерация превью
         thumb_filename = f"thumb_{uuid.uuid4()}.jpg"
         thumb_path = os.path.join(settings.MEDIA_ROOT, 'thumbnails', thumb_filename)
         os.makedirs(os.path.dirname(thumb_path), exist_ok=True)
 
-        (
-            ffmpeg
-            .input(compressed_path, ss=1)
-            .filter('scale', 320, -1)
-            .output(thumb_path, vframes=1)
-            .run(capture_stdout=True, capture_stderr=True)
-        )
+        ffmpeg.input(compressed_path, ss=1).filter('scale', 320, -1).output(
+            thumb_path, vframes=1).run(capture_stdout=True, capture_stderr=True)
 
-        instance.thumbnail.name = f"thumbnails/{thumb_filename}"
+        # ✅ Загрузка превью на Cloudinary
+        cloud_thumb_url = upload_to_cloudinary(thumb_path, folder='thumbnails', resource_type='image')
+        instance.thumbnail = cloud_thumb_url
+
         instance.status = 'done'
         instance.save()
 
+        # Удаляем временные файлы
+        os.remove(compressed_path)
+        os.remove(thumb_path)
+
     except Product.DoesNotExist:
-        print(f"❌ Продукт ID {product_id} не найден.")
+        print(f" Продукт ID {product_id} не найден.")
     except self.retry.exc:
         raise
     except Exception as exc:
